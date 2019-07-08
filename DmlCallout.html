@@ -1,0 +1,42 @@
+<apex:page controller="DmlCalloutController">
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Congratulations</h1>
+  This is your new Page
+  <!-- End Default Content REMOVE THIS -->
+  <apex:form id="formid">
+   <apex:outputPanel id="out">
+      <apex:commandButton  value="Save" id="theButton" action="{!save}" oncomplete="javaremoting('{!leadid}')" reRender="out" />
+   </apex:outputPanel>
+   <div id="resultid">
+   </div>
+   <!-- <apex:actionFunction name="callsave" action="{!save}" oncomplete="javaremoting()" rerender="out"/>   -->
+  </apex:form>
+  <script>
+      function savejs(){
+          console.log('Save js called');
+          callsave();
+      }
+      
+      function javaremoting(param){
+          alert(param);
+          console.log('java remoting called ');
+          Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.DmlCalloutController.makeCallout}',
+            param, 
+            function(result, event){
+                if (event.status) {
+                    console.log('success remote');
+                    console.log(result);
+                    document.getElementById('resultid').innerHTML = result;
+                    
+                } else if (event.type === 'exception') {
+                    console.log('error remoting excetion');
+                } else {
+                    console.log('error remoting');
+                }
+            }, 
+            {escape: true}
+        );
+      }
+  </script>
+</apex:page>
